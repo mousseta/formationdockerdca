@@ -1,0 +1,31 @@
+docker run -it --name fleet-tools ubuntu bash
+===
+apt update && apt install -y python3
+===
+python3 --version
+===
+exit
+===
+docker commit fleet-tools my-python-env:v1
+===
+docker run --rm my-python-env:v1 python3 --version
+===
+docker export fleet-tools > backup_fleet.tar
+===
+ls -lh backup_fleet.tar
+===
+docker rm fleet-tools
+===
+docker rmi my-python-env:v1
+===
+docker rmi ubuntu -f
+===
+docker images
+===
+cat backup_fleet.tar | docker import - fleet-restored:v1
+===
+docker run -it fleet-restored:v1 bash
+===
+python3 --version
+===
+exit

@@ -1,0 +1,25 @@
+watch -n 1 docker service ps telemetry_consumer
+===
+docker service update --env-add KAFKA_BROKER=fake_server:9092 telemetry_consumer
+===
+watch -n 1 docker service ps telemetry_consumer
+===
+docker service logs -f telemetry_consumer
+===
+docker service update --env-add KAFKA_BROKER=kafka:9092 telemetry_consumer
+===
+docker service inspect telemetry_consumer --format '{{range .Spec.TaskTemplate.ContainerSpec.Env}}{{println .}}{{end}}'
+===
+watch -n 1 docker service ps telemetry_consumer
+===
+docker service logs -f telemetry_consumer
+===
+watch -n 1 "docker service ps telemetry_consumer | grep -E 'ID|Running'"
+===
+docker service scale telemetry_consumer=5
+===
+docker service ps telemetry_consumer | grep -E 'ID|Running' 
+===
+docker ps --filter name=telemetry_consumer
+===
+docker service ps telemetry_consumer

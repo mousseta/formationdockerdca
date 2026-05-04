@@ -1,0 +1,24 @@
+===
+docker volume create ai-logs
+===
+docker volume ls
+===
+docker volume inspect ai-logs
+===
+docker run -it --name engine-v1 -v ai-logs:/data ubuntu bash
+===
+echo "CRITICAL: Engine overheat detected" > /data/alerts.txt
+===
+exit
+===
+docker rm engine-v1
+===
+docker run --rm -v ai-logs:/recovery alpine cat /recovery/alerts.txt
+===
+echo "config_active=true" > config.txt
+===
+docker run -it --mount type=bind,source=$(pwd)/config.txt,target=/app/config.txt ubuntu cat /app/config.txt
+===
+docker volume rm ai-logs
+===
+exit

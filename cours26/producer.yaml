@@ -1,0 +1,21 @@
+# producer-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: producer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: producer
+  template:
+    metadata:
+      labels:
+        app: producer
+    spec:
+      containers:
+      - name: producer
+        image: mousse2025/producer:latest
+        env:
+        - name: KAFKA_BROKER
+          value: "kafka:9092"

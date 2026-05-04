@@ -1,0 +1,4 @@
+ps aux | grep dockerd
+ls -l /var/run/docker.sock
+curl --unix-socket /var/run/docker.sock http://localhost/version
+docker run hello-world

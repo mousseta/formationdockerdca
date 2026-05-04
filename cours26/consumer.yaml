@@ -1,0 +1,21 @@
+# consumer-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: consumer
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: consumer
+  template:
+    metadata:
+      labels:
+        app: consumer
+    spec:
+      containers:
+      - name: consumer
+        image: mousse2025/consumer:latest
+        env:
+        - name: KAFKA_BROKER
+          value: "kafka:9092"

@@ -1,0 +1,7 @@
+docker run -d --name lab-diag -p 8080:80 nginx
+docker logs -f lab-diag
+docker exec -it lab-diag sh
+ls /etc/nginx
+exit
+docker inspect lab-diag
+docker inspect --format='{{.NetworkSettings.IPAddress}}' lab-diag

@@ -1,0 +1,12 @@
+# Environnements virtuels Python
+venv/
+.venv/
+env/
+ENV/
+
+# Dossier Kafka
+kafka/
+
+# (optionnel) fichiers liés à Kafka si tu en as
+kafka-logs/
+*.log

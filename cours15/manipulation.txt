@@ -1,0 +1,32 @@
+rm -rf /tmp/kraft-combined-logs
+===
+RESULTAT=$(bin/kafka-storage.sh random-uuid) && echo "$RESULTAT"
+===
+bin/kafka-storage.sh format -t $RESULTAT --config config/server.properties --standalone
+===
+bin/kafka-server-start.sh config/server.properties
+===
+#creer le fichier Dockerfile dans producer
+    FROM python:3.10-slim
+    WORKDIR /app
+    COPY requirements.txt .
+    RUN pip install --no-cache-dir -r requirements.txt
+    COPY producer_car.py .
+    CMD ["python", "producer_car.py"]
+===
+docker build -t producer-car:v1 .
+===
+docker images
+===
+docker history producer-car:v1
+===
+docker run --name car-sensor-1 producer-car:v1
+===
+ip addr
+===
+docker rm -f car-sensor-1
+===
+docker build -t producer-car:v1 .
+===
+docker run --name car-sensor-1 -e KAFKA_BROKER=172.30.47.94:9094 producer-car:v1
+===

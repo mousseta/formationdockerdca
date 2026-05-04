@@ -1,0 +1,26 @@
+docker rm -f demo-runtime overlay-force cow-demo-1 cow-demo-2 2>/dev/null
+docker info | grep -E "Storage Driver|Runtimes|Default Runtime"
+docker run -d --name demo-runtime alpine sh -c "while true; do sleep 60; done"
+docker inspect demo-runtime --format 'Driver: {{.Driver}}'
+docker inspect demo-runtime --format 'Snapshotter: {{.Storage.RootFS.Snapshot.Name}}'
+docker inspect demo-runtime --format 'Runtime: {{.HostConfig.Runtime}}'
+docker inspect demo-runtime --format 'OCI media type: {{.ImageManifestDescriptor.mediaType}}'
+PID=$(docker inspect demo-runtime --format '{{.State.Pid}}')
+echo $PID
+ps -fp $PID
+ps -ef | grep -E "dockerd|containerd|containerd-shim|runc" | grep -v grep
+sudo apt update
+sudo apt install -y psmisc
+pstree -apS | grep -E "dockerd|containerd|containerd-shim|sleep"
+lsns -p $PID
+cat /proc/$PID/cgroup
+docker run -dit --name cow-demo-1 alpine sh
+docker run -dit --name cow-demo-2 alpine sh
+docker exec cow-demo-1 sh -c 'echo "Donnees_FleetPulse" > /log.txt'
+docker exec cow-demo-1 cat /log.txt
+docker exec cow-demo-2 sh -c 'cat /log.txt' 
+docker diff cow-demo-1
+docker diff cow-demo-2
+docker run --rm alpine cat /log.txt
+sudo find /var/lib/docker -name "log.txt" 2>/dev/null
+docker system df -v

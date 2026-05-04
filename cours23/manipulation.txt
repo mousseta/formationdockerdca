@@ -1,0 +1,21 @@
+docker build -t mousse2025/producer  ./producer 
+docker build -t mousse2025/consumer  ./consumer
+docker build -t mousse2025/api  ./api
+docker login -u mousse2025
+docker push mousse2025/producer
+docker push mousse2025/consumer
+docker push mousse2025/api
+vagrant ssh manager
+bin/kafka-storage.sh random-uuid
+nano stack.yml
+docker stack deploy -c stack.yml telemetry
+docker service ls
+docker service ps telemetry_consumer_ml
+docker exec -it $(docker ps -q -f name=telemetry_kafka) \
+/opt/kafka/bin/kafka-topics.sh --list --bootstrap-server kafka:9092
+KAFKA_ID=$(docker ps --filter name=telemetry_kafka -q | head -n 1)
+docker exec -it $KAFKA_ID kafka-topics.sh --list --bootstrap-server localhost:9092
+curl http://192.168.56.10:5000/status
+curl http://192.168.56.11:5000/status
+docker stack rm telemetry
+docker volume rm telemetry_kafka_data -f

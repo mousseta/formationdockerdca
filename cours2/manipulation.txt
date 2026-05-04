@@ -1,0 +1,11 @@
+java -version
+sudo apt update && sudo apt install openjdk-17-jdk -y
+java -version
+tar -xvzf kafka_2.13-4.2.0.tgz
+cd kafka_2.13-4.2.0
+bin/kafka-storage.sh random-uuid
+bin/kafka-storage.sh format -t 09trsJufReuhX4opca7lfQ -c config/server.properties --standalone
+bin/kafka-server-start.sh config/server.properties
+
+
+

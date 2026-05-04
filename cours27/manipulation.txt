@@ -1,0 +1,43 @@
+ps aux | grep dockerd
+systemctl status docker
+PID_DOCKER=$(systemctl show docker --property=MainPID --value)
+echo $PID_DOCKER
+top -b -n1 -p $PID_DOCKER
+docker rm -f test-daemon 2>/dev/null
+docker run -d --name test-daemon nginx
+docker ps | grep test-daemon
+sudo systemctl stop docker
+docker ps
+sudo systemctl stop docker.service
+sudo systemctl stop docker.socket
+docker ps
+sudo systemctl start docker
+docker ps -a | grep test-daemon
+docker rm -f test-daemon
+docker run -d --rm --name test nginx
+curl -s --unix-socket /var/run/docker.sock \
+  http://localhost/v1.41/containers/json | python3 -m json.tool
+docker ps
+curl -s --unix-socket /var/run/docker.sock \
+  http://localhost/v1.41/containers/json \
+  | python3 -c "
+import sys, json
+containers = json.load(sys.stdin)
+for c in containers:
+    print(c['Id'][:12], c['Image'], c['Status'])
+"
+docker rm -f api-test 2>/dev/null
+curl -s --unix-socket /var/run/docker.sock \
+  -X POST \
+  -H "Content-Type: application/json" \
+  -d '{"Image": "nginx", "ExposedPorts": {"80/tcp": {}}}' \
+  http://localhost/v1.41/containers/create?name=api-test
+curl -s --unix-socket /var/run/docker.sock \
+  -X POST \
+  http://localhost/v1.41/containers/api-test/start
+docker ps | grep api-test
+docker stop api-test && docker rm api-test
+docker images mousse2025/api
+docker history mousse2025/api:latest
+docker inspect nginx \
+  --format='{{json .RootFS.Layers}}' | python3 -m json.tool

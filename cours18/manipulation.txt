@@ -1,0 +1,37 @@
+docker network create fleet-net
+===
+docker run -d --name kafka \
+  --network fleet-net \
+  -e KAFKA_NODE_ID=1 \
+  -e KAFKA_PROCESS_ROLES=broker,controller \
+  -e KAFKA_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093 \
+  -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092 \
+  -e KAFKA_CONTROLLER_QUORUM_VOTERS=1@kafka:9093 \
+  -e KAFKA_CONTROLLER_LISTENER_NAMES=CONTROLLER \
+  -e KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT \
+  -e KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1 \
+  apache/kafka:3.7.0
+===
+docker exec -it kafka bash
+===
+/opt/kafka/bin/kafka-topics.sh --create \
+--topic telemetry \
+--bootstrap-server localhost:9092 \
+--partitions 1 \
+--replication-factor 1
+===
+/opt/kafka/bin/kafka-topics.sh --create \
+--topic alerts \
+--bootstrap-server localhost:9092 \
+--partitions 1 \
+--replication-factor 1
+===
+docker build -t fleet-producer ./producer
+===
+docker build -t fleet-consumer ./consumer
+===
+docker build -t fleet-dashboard ./api
+===
+docker run -d --name consumer --network fleet-net fleet-consumer
+docker run -d --name producer --network fleet-net fleet-producer
+docker run -d --name api --network fleet-net -p 5000:5000 fleet-dashboard

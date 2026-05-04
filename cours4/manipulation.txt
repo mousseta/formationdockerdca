@@ -1,0 +1,20 @@
+#lancer kafka si necessaire
+bin/kafka-server-start.sh config/server.properties
+lsof -i :9092
+#test des topics
+bin/kafka-console-producer.sh --topic telemetry --bootstrap-server localhost:9092 
+bin/kafka-console-consumer.sh --topic telemetry --from-beginning --bootstrap-server localhost:9092
+#terminal1
+source venv/bin/activate
+cd cours4
+python consumer/consumer_ml.py
+#terminal2
+source venv/bin/activate 
+cd cours4
+python api/app_dashboard.py
+#terminal3
+source venv/bin/activate
+cd cours4
+python producer/producer_car.py
+
+

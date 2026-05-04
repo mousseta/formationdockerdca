@@ -1,0 +1,23 @@
+docker rm car-sensor-1
+===
+cd producer
+===
+ecrire le Dockerfile
+    FROM python:3.10-slim
+    WORKDIR /app
+    COPY requirements.txt .
+    RUN pip install --no-cache-dir -r requirements.txt
+    COPY producer_car.py .
+    RUN useradd -m appuser && chown -R appuser /app
+    USER appuser
+    CMD ["python", "producer_car.py"]
+===
+docker build -t producer-car-secure .
+===
+docker run -d --name secure-check -e KAFKA_BROKER=172.30.47.94:9094 producer-car-secure
+===
+docker exec secure-check whoami
+===
+docker exec secure-check id
+===
+docker rm -f secure-check

@@ -1,0 +1,23 @@
+https://developer.hashicorp.com/vagrant/install
+vagrant --version
+vagrant up
+vagrant status
+vagrant ssh manager
+curl -fsSL https://get.docker.com | sh
+sudo usermod -aG docker vagrant
+exit
+vagrant ssh manager
+docker version
+vagrant ssh worker1
+curl -fsSL https://get.docker.com | sh
+sudo usermod -aG docker vagrant
+exit
+vagrant ssh worker1
+docker version
+vagrant ssh worker2
+curl -fsSL https://get.docker.com | sh
+sudo usermod -aG docker vagrant
+exit
+vagrant ssh worker2
+docker version
+

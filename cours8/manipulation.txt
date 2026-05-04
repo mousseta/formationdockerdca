@@ -1,0 +1,4 @@
+docker pull nginx
+docker images
+docker pull nginx:1.25
+docker rmi nginx:1.25

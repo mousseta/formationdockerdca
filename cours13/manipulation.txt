@@ -1,0 +1,14 @@
+docker run -d --name api-isolee nginx
+===
+docker run -d --name api-visible -p 8081:80 nginx
+===
+docker port api-visible
+===
+docker run -d --name api-auto -P nginx
+===
+docker ps
+===
+docker rm -f api-isolee api-visible api-auto
+===
+docker run -d --name api-securisee -p 127.0.0.1:8081:80 nginx  
+===

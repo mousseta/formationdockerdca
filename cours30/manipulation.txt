@@ -1,0 +1,18 @@
+docker run ubuntu whoami
+docker run --rm alpine sh -c "apk add libcap && capsh --print"
+sudo apt update
+sudo apt install wget apt-transport-https gnupg lsb-release -y
+echo "deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
+sudo apt update
+sudo apt install trivy -y
+trivy image nginx
+trivy image --severity HIGH,CRITICAL nginx
+docker run --rm --cap-drop ALL alpine whoami
+docker run -d --name secure-nginx --memory="256m" --cpus="0.5" --cap-drop ALL  nginx
+docker inspect secure-nginx | grep -i cap
+ip addr
+docker swarm init --advertise-addr  172.30.47.94
+ echo "motdepasse" | docker secret create db_password -
+docker service create --name secure-app --secret my_db_password alpine sleep 1000
+docker inspect secure-app
+docker swarm leave --force

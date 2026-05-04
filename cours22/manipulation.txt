@@ -1,0 +1,8 @@
+vagrant ssh manager
+docker swarm init --advertise-addr 192.168.56.10
+docker swarm join-token worker
+vagrant ssh worker1
+docker swarm join --token <TOKEN> 192.168.56.10:2377
+vagrant ssh worker2
+docker swarm join --token <TOKEN> 192.168.56.10:2377
+docker node ls

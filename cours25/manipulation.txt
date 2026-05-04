@@ -1,0 +1,30 @@
+===
+docker stack remove telemetry
+===
+cd stack
+===
+docker stack deploy -c stack.yml telemetry
+===
+docker stack ps telemetry
+===
+docker service scale telemetry_api=3
+===
+docker service ps telemetry_api
+===
+docker build -t mousse2025/api:latest ./api
+===
+docker push mousse2025/api:latest
+===
+docker service update --image mousse2025/api:latest telemetry_api
+===
+for i in $(seq 1 9); do
+  curl -s http://localhost:5000/whoami
+  echo ""
+done
+===
+curl http://<IP_MANAGER>:5000/whoami
+===
+curl http://<IP_WORKER1>:5000/whoami
+===
+curl http://<IP_WORKER2>:5000/whoami
+===

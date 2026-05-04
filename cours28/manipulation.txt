@@ -1,0 +1,18 @@
+lsns
+lsns -t pid
+lsns -t net
+lsns -t mnt
+docker rm -f test-kernel 2>/dev/null
+docker run -it --name test-kernel ubuntu bash
+ps aux
+ls -l /proc/1/ns
+exit
+docker top test-kernel
+docker rm -f nginx-limit 2>/dev/null
+docker run -d --name nginx-limit -m 256m nginx
+docker inspect nginx-limit --format 'Memory limit: {{.HostConfig.Memory}} bytes'
+docker exec nginx-limit mount | grep cgroup
+docker exec nginx-limit cat /proc/1/cgroup
+docker exec nginx-limit cat /sys/fs/cgroup/memory.max
+docker exec nginx-limit cat /sys/fs/cgroup/memory.current
+docker stats nginx-limit

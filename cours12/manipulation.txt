@@ -1,0 +1,38 @@
+===
+docker run -d --name web-host --network host nginx
+===
+curl localhost:80
+===
+docker rm -f web-host
+===
+docker run -it --name isolated-proc --network none ubuntu bash
+===
+ip addr
+===
+exit
+===
+docker run -d --name car-alpha ubuntu sleep infinity
+===
+docker run -it --name car-beta ubuntu bash
+===
+ping car-alpha
+===
+exit
+===
+docker network create fleet-net
+===
+docker run -d --name sensor-front --network fleet-net nginx
+===
+docker run -it --network fleet-net ubuntu ping sensor-front
+===
+exit
+===
+docker network create --subnet=172.20.0.0/16 static-net
+===
+docker run -d --name static-server --net static-net --ip 172.20.0.100 nginx
+===
+docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' static-server
+===
+docker run --rm --net static-net alpine ping -c 2 172.20.0.100
+===
+exit

@@ -1,0 +1,49 @@
+rm -rf /tmp/kraft-combined-logs
+===
+RESULTAT=$(bin/kafka-storage.sh random-uuid) && echo "$RESULTAT"
+===
+bin/kafka-storage.sh format -t $RESULTAT --config config/server.properties --standalone
+===
+===
+bin/kafka-server-start.sh config/server.properties
+===
+cd producer
+===
+docker build -t producer-car:v1 .
+===
+docker run producer-car:v1 ls
+===
+#Ecrire un Dockerfile
+FROM python:3.10-slim
+WORKDIR /app
+COPY . .
+RUN pip install --no-cache-dir -r requirements.txt
+RUN useradd -m appuser && chown -R appuser /app
+USER appuser
+ENTRYPOINT ["python"]
+CMD ["producer_car.py"]
+===
+docker build -t producer-car:secure .
+===
+docker run producer-car:secure ls
+===
+#ecrire un Dockerfile Dockerfile.multi
+FROM python:3.10-slim AS builder
+WORKDIR /app
+COPY requirements.txt .
+# Installation des dépendances dans un dossier custom
+RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
+FROM python:3.10-slim
+WORKDIR /app
+RUN mkdir -p /home/appuser
+COPY --from=builder /install /usr/local
+COPY producer_car.py .
+RUN chown -R 1000:1000 /app /home/appuser
+USER 1000
+ENTRYPOINT ["python", "producer_car.py"]
+===
+docker build -t producer-car:optimized -f Dockerfile.multi .
+===
+docker images | grep producer-car
+===
+docker run -e KAFKA_BROKER=172.30.47.94:9094 producer-car:optimized
